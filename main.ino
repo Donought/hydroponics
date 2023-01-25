@@ -6,7 +6,7 @@
 #define BUTTON_PIN 4
 #define LDRpin A3
 int LDRValue = 0;
-
+const int powerPin = 2;
 
 
 // Include the Arduino Stepper Library
@@ -25,6 +25,8 @@ Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
 void setup()
 {
+  // Vandstandsmåler
+  pinMode(powerPin, INPUT_PULLUP);
   // set the speed at 60 rpm:
   myStepper.setSpeed(100);
   // initialize the serial port:
@@ -47,7 +49,15 @@ void setup()
 
 void loop() 
 {
-
+// Vandstandsmåler
+  int power = digitalRead(powerPin); 
+  
+  if (power == HIGH) {
+    Serial.println("Yes");
+  } else {
+    Serial.println("No");
+  }
+  
   LDRValue = analogRead(LDRpin);
   Serial.println(LDRValue);
   delay(10);
