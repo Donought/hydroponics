@@ -1,12 +1,25 @@
+
 #include <LiquidCrystal_I2C.h>
 
-
+// Libraries for temperature
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 
 #define BUTTON_PIN 4
-#define LDRpin A3
-int LDRValue = 0;
-const int powerPin = 2;
+
+
+// Libraries for temperature
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+const int SENSOR_PIN = 4; // Temperatur data pin
+
+OneWire oneWire(SENSOR_PIN);         
+DallasTemperature tempSensor(&oneWire);
+
+float tempCelsius;    // temperature in Celsius
+
 
 
 // Include the Arduino Stepper Library
@@ -16,31 +29,19 @@ LiquidCrystal_I2C lcd(0x27, 16, 4);
 int counter = 0;
 int mad = 210;
 
-// Number of steps per output rotation
-const int stepsPerRevolution = 200;
-
-// Create Instance of Stepper library
-Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 
 
 void setup()
 {
-  // Vandstandsmåler
-  pinMode(powerPin, INPUT_PULLUP);
+  tempSensor.begin();    // initialize the sensor
   // set the speed at 60 rpm:
-  myStepper.setSpeed(100);
   // initialize the serial port:
   Serial.begin(9600);
 
      lcd.init();
 
-  // First row
+
   lcd.backlight();
-  lcd.setCursor(2,2);
-  //Text som skal vises
-  lcd.setCursor(0,0);
-    lcd.print("Navn:");
-    lcd.print("Capella");
 
 
   pinMode(BUTTON_PIN,INPUT_PULLUP);
@@ -49,32 +50,14 @@ void setup()
 
 void loop() 
 {
-// Vandstandsmåler
-  int power = digitalRead(powerPin); 
-  
-  if (power == HIGH) {
-    Serial.println("Yes");
-  } else {
-    Serial.println("No");
-  }
-  
-  LDRValue = analogRead(LDRpin);
-  Serial.println(LDRValue);
-  delay(10);
-  
-  // step one revolution in one direction:
-Serial.println(digitalRead(BUTTON_PIN));
+tempSensor.requestTemperatures();             // send the command to get temperatures
+  tempCelsius = tempSensor.getTempCByIndex(0);  // read temperature in Celsius
 
-byte buttonState = digitalRead(BUTTON_PIN);
-buttonState = 0;
-if(buttonState == 0){
-  myStepper.step(stepsPerRevolution);
-counter+=1;
-mad-=10;
-if(mad<0){
-  mad+=10;
-}
-}
+
+  Serial.print("Temperature: ");
+  Serial.print(tempCelsius);    // print the temperature in Celsius
+  Serial.println("°C");
+
 lcd.setCursor(0,0);
 lcd.print("Placeholder1");
 lcd.setCursor(0,1);
@@ -83,5 +66,8 @@ lcd.setCursor(0,2);
 lcd.print("placeholder3");
 lcd.setCursor(0,3);
 lcd.print("placeholder4");
+
+
+  
 
 }
