@@ -3,9 +3,6 @@
 // Libraries for temperature
 #include <OneWire.h>
 #include <DallasTemperature.h>
-// Libraries for temperature
-#include <OneWire.h>
-#include <DallasTemperature.h>
 // Defines the temperatur sensor pin to get data
 const int SENSOR_PIN = 2; 
 
