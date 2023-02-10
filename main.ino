@@ -4,22 +4,24 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 // Defines the temperatur sensor pin to get data
-const int SENSOR_PIN = 2; 
+const int TMP_PIN = 2; 
 
-OneWire oneWire(SENSOR_PIN);         
+OneWire oneWire(TMP_PIN);         
 DallasTemperature tempSensor(&oneWire);
 
-
+// Defines pin to check if the water level is sufficient
 const int waterPin = 3;
 
 // Temperature in Celsius
 float tempC;    
+// Defines default light level
 int LDRvalue = 0;
+// Contains text to describe water level
 String waterLevel = "";
-// Include the Arduino Stepper Library
+
 // Readies the LCD display at the 0x27 address
 LiquidCrystal_I2C lcd(0x27, 16, 4);
-
+//
 #define LDRpin A3
 
 
@@ -42,7 +44,7 @@ void setup()
 void loop() 
 {
   
-  
+ // If statement checks if there is a connection between the wires and returns the current state of the water 
   if(digitalRead(waterPin) == HIGH){
     waterLevel = "Low";
     }
@@ -59,11 +61,12 @@ void loop()
 //Requests the current temperature from the sensor
 tempSensor.requestTemperatures();   
 // Saves the current temperature to a variable          
-  tempC = tempSensor.getTempCByIndex(0);  
+  tempC = tempSensor.getTempCByIndex(0);
 // Prints for debugging
   Serial.print("Temperature: ");
   Serial.print(tempC);    
   Serial.println("°C");
+// Lines for displaying the enviroment's current condition
 lcd.clear();
 lcd.setCursor(0,0); 
 lcd.print("Current status:");
