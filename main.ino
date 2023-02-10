@@ -9,10 +9,13 @@ const int SENSOR_PIN = 2;
 OneWire oneWire(SENSOR_PIN);         
 DallasTemperature tempSensor(&oneWire);
 
+
+const int waterPin = 3;
+
 // Temperature in Celsius
 float tempC;    
 int LDRvalue = 0;
-
+String waterLevel = "";
 // Include the Arduino Stepper Library
 // Readies the LCD display at the 0x27 address
 LiquidCrystal_I2C lcd(0x27, 16, 4);
@@ -22,23 +25,15 @@ LiquidCrystal_I2C lcd(0x27, 16, 4);
 
 
 void setup()
-{ // Starts the sensor
+{ 
+  pinMode(waterPin, INPUT_PULLUP);
+  // Starts the sensor
   tempSensor.begin();    
   // Starts serial port used for debugging
   Serial.begin(9600);
   // Starts LCD display
   lcd.init();
   lcd.backlight();
-lcd.setCursor(0,0); 
-lcd.print("Current status:");
-lcd.setCursor(0,1);
-lcd.print("Tmp: ");
-lcd.setCursor(6,1);
-lcd.print("°C");
-lcd.setCursor(0,2);
-lcd.print("Light:");
-lcd.setCursor(0,3);
-lcd.print("Water level: ");
 
 
 
@@ -46,6 +41,16 @@ lcd.print("Water level: ");
 
 void loop() 
 {
+  
+  
+  if(digitalRead(waterPin) == HIGH){
+    waterLevel = "Low";
+    }
+    else{
+      waterLevel = "Good";
+    }
+  
+  
 // Reads the current light level near the LDR and saves it to variable
   LDRvalue = analogRead(LDRpin);
   // LDR print for debugging
@@ -59,15 +64,25 @@ tempSensor.requestTemperatures();
   Serial.print("Temperature: ");
   Serial.print(tempC);    
   Serial.println("°C");
+lcd.clear();
+lcd.setCursor(0,0); 
+lcd.print("Current status:");
+lcd.setCursor(0,1);
+lcd.print("Tmp: ");
+lcd.setCursor(6,1);
+lcd.print("°C");
+lcd.setCursor(0,2);
+lcd.print("Light:");
+lcd.setCursor(0,3);
+lcd.print("Water level: ");
 
 lcd.setCursor(5,1);
-lcd.print(tempC,1); // Comma might be redundant;
+lcd.print(tempC); 
 lcd.setCursor(7,2);
 lcd.print(LDRvalue);
 lcd.setCursor(13,3);
-lcd.print("NOPE");
-// If this fails use lcd.clear between updates
+lcd.print(waterLevel);
 // Delay between status checks
-delay(100);
+delay(10);
 
 }
