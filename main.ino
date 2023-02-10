@@ -1,4 +1,4 @@
-
+// Library for LCD display
 #include <LiquidCrystal_I2C.h>
 // Libraries for temperature
 #include <OneWire.h>
@@ -14,7 +14,6 @@ float tempC;
 int LDRvalue = 0;
 
 // Include the Arduino Stepper Library
-#include <Stepper.h>
 // Readies the LCD display at the 0x27 address
 LiquidCrystal_I2C lcd(0x27, 16, 4);
 
@@ -62,10 +61,10 @@ tempSensor.requestTemperatures();
   Serial.println("°C");
 
 lcd.setCursor(5,1);
-lcd.print(tempC,1) // Comma might be redundant;
+lcd.print(tempC,1); // Comma might be redundant;
 lcd.setCursor(7,2);
 lcd.print(LDRvalue);
-lcd.setCursor(0,3);
+lcd.setCursor(13,3);
 lcd.print("NOPE");
 // If this fails use lcd.clear between updates
 // Delay between status checks
